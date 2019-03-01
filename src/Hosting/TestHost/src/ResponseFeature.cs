@@ -11,6 +11,9 @@ namespace Microsoft.AspNetCore.TestHost
 {
     internal class ResponseFeature : IHttpResponseFeature
     {
+        private Stream _internalStream;
+        private HttpContext _context;
+
         private Func<Task> _responseStartingAsync = () => Task.FromResult(true);
         private Func<Task> _responseCompletedAsync = () => Task.FromResult(true);
         private HeaderDictionary _headers = new HeaderDictionary();
@@ -61,7 +64,17 @@ namespace Microsoft.AspNetCore.TestHost
 
         public IHeaderDictionary Headers { get; set; }
 
-        public Stream Body { get; set; }
+        public Stream Body
+        {
+            get
+            {
+
+            }
+            set
+            {
+
+            }
+        }
 
         public bool HasStarted { get; set; }
 
