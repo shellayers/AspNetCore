@@ -35,9 +35,6 @@ namespace Microsoft.AspNetCore.TestHost
             set
             {
                 _internalStream = value;
-                var requestPipeReader = new StreamPipeReader(_internalStream);
-                _context.Request.BodyPipe = requestPipeReader;
-                _context.Response.RegisterForDispose(requestPipeReader);
             }
         }
 

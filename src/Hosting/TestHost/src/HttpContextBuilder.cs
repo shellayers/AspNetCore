@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.TestHost
         
         private TaskCompletionSource<HttpContext> _responseTcs = new TaskCompletionSource<HttpContext>(TaskCreationOptions.RunContinuationsAsynchronously);
         private ResponseStream _responseStream;
-        private ResponseFeature _responseFeature = new ResponseFeature();
+        private ResponseFeature _responseFeature;
         private CancellationTokenSource _requestAbortedSource = new CancellationTokenSource();
         private bool _pipelineFinished;
         private Context _testContext;
@@ -41,6 +41,7 @@ namespace Microsoft.AspNetCore.TestHost
             
             _responseStream = new ResponseStream(ReturnResponseMessageAsync, AbortRequest, () => AllowSynchronousIO);
             _responseFeature.Body = _responseStream;
+            _responseFeature = new ResponseFeature(_httpContext);
         }
 
         public bool AllowSynchronousIO { get; set; }

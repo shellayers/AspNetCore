@@ -8,41 +8,28 @@ namespace Microsoft.AspNetCore.Http.Features
 {
     public class ResponseBodyPipeFeature : IResponseBodyPipeFeature
     {
-        private StreamPipeWriter _internalPipeWriter;
-        private PipeWriter _userSetPipeWriter;
-        private HttpContext _context;
+        internal PipeWriter _internalPipeWriter;
+        private HttpRequestFeature _feature;
 
-        public ResponseBodyPipeFeature(HttpContext context)
+        public ResponseBodyPipeFeature(HttpRequestFeature feature)
         {
-            if (context == null)
+            if (feature == null)
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(feature));
             }
-            _context = context;
+            _feature = feature;
         }
 
         public PipeWriter ResponseBodyPipe
         {
             get
             {
-                if (_userSetPipeWriter != null)
-                {
-                    return _userSetPipeWriter;
-                }
-
-                if (_internalPipeWriter == null ||
-                    !object.ReferenceEquals(_internalPipeWriter.InnerStream, _context.Response.Body))
-                {
-                    _internalPipeWriter = new StreamPipeWriter(_context.Response.Body);
-                    _context.Response.RegisterForDispose(_internalPipeWriter);
-                }
-
                 return _internalPipeWriter;
             }
             set
             {
-                _userSetPipeWriter = value ?? throw new ArgumentNullException(nameof(value));
-                // TODO set the response body Stream to an adapted pipe https://github.com/aspnet/AspNetCore/issues/3971
+                _internalPipeWriter = value;
+                _feature._internalStream = new WriteOnlyPipeStream(_internalPipeWriter);
             }
         }
     }

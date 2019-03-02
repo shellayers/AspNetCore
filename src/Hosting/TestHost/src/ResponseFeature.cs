@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.IO.Pipelines;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -20,7 +21,7 @@ namespace Microsoft.AspNetCore.TestHost
         private int _statusCode;
         private string _reasonPhrase;
 
-        public ResponseFeature()
+        public ResponseFeature(HttpContext context)
         {
             Headers = _headers;
             Body = new MemoryStream();
@@ -28,6 +29,7 @@ namespace Microsoft.AspNetCore.TestHost
             // 200 is the default status code all the way down to the host, so we set it
             // here to be consistent with the rest of the hosts when writing tests.
             StatusCode = 200;
+            _context = context;
         }
 
         public int StatusCode
@@ -68,11 +70,11 @@ namespace Microsoft.AspNetCore.TestHost
         {
             get
             {
-
+                return _internalStream;
             }
             set
             {
-
+                _internalStream = value;
             }
         }
 
